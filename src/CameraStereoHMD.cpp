@@ -15,7 +15,7 @@ CameraStereoHMD::CameraStereoHMD()
 : ci::CameraStereo()
 , mProjectionCenterOffset( 0.151976f )
 {
-    setEyeSeparation( 0.00119808f );
+    setEyeSeparation( 0.64f );//0.00119808f );
     setConvergence(0);
     setFov( 110.0f );
 }
@@ -24,16 +24,18 @@ CameraStereoHMD::CameraStereoHMD( int pixelWidth, int pixelHeight, float fov )
 : CameraStereo( pixelWidth, pixelHeight, fov )
 , mProjectionCenterOffset( 0.151976f )
 {
-    setEyeSeparation( 0.00119808f );
+    setEyeSeparation( 0.64f );//0.00119808f );
     setConvergence(0);
+    setFov( 110.0f );
 }
 
 CameraStereoHMD::CameraStereoHMD( int pixelWidth, int pixelHeight, float fov, float nearPlane, float farPlane )
 : CameraStereo( pixelWidth, pixelHeight, fov, nearPlane, farPlane )
 , mProjectionCenterOffset( 0.151976f )
 {
-    setEyeSeparation( 0.00119808f );
+    setEyeSeparation( 0.64f );//0.00119808f );
     setConvergence(0);
+    setFov( 110.0f );
 }
 
 
