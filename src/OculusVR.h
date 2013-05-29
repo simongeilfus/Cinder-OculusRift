@@ -11,6 +11,9 @@
 
 #include "OVR.h"
 
+#include "cinder/gl/Texture.h"
+#include "cinder/gl/GlslProg.h"
+
 
 namespace ovr {
     
@@ -28,6 +31,9 @@ namespace ovr {
     inline ci::Vec3f toCinder( const OVR::Vector3f& ovrVec ){
         return ci::Vec3f( ovrVec.x, ovrVec.y, ovrVec.z );
     }
+    inline ci::Area toCinder( const OVR::Util::Render::Viewport& ovrViewport ){
+        return ci::Area( ci::Vec2i( ovrViewport.x, ovrViewport.y ), ci::Vec2i( ovrViewport.x + ovrViewport.w, ovrViewport.y + ovrViewport.h ) );
+    }
     
     
     // OculusVR Device Class
@@ -36,6 +42,7 @@ namespace ovr {
     class Device
     {
     public:
+        // Returns an empty ptr if we can't initialize correctly the HMD device
         static DeviceRef create();
         ~Device();
         
@@ -45,6 +52,17 @@ namespace ovr {
         ci::Vec4f   getDistortionParams() const;
         
         ci::Quatf   getOrientation();
+        
+        // 
+        ci::Area        getLeftEyeViewport();
+        ci::Matrix44f   getLeftEyeViewAdjust();
+        ci::Matrix44f   getLeftEyeProjection();
+        ci::Matrix44f   getLeftEyeOrthoProjection();
+        
+        ci::Area        getRightEyeViewport();
+        ci::Matrix44f   getRightEyeViewAdjust();
+        ci::Matrix44f   getRightEyeProjection();
+        ci::Matrix44f   getRightEyeOrthoProjection();
         
     protected:
         Device( bool autoCalibrate = true );
@@ -61,6 +79,29 @@ namespace ovr {
         
         bool                            mIsAutoCalibrating;
         std::thread                     mAutoCalibrationThread;
+    };
+    
+    
+    // Distortion Shader Class
+    typedef std::shared_ptr<class DistortionHelper> DistortionHelperRef;
+    
+    class DistortionHelper
+    {
+    public:
+        static DistortionHelperRef create( bool chromaticAbCorrection = true );
+        
+        void render( const ci::gl::TextureRef &texture, const ci::Rectf &rect = ci::Rectf( ci::Vec2f(0,0), ci::Vec2f(1280,800) ) );
+        void render( const ci::gl::Texture &texture, const ci::Rectf &rect = ci::Rectf( ci::Vec2f(0,0), ci::Vec2f(1280,800) )  );
+        
+    protected:
+        DistortionHelper( bool chromaticAbCorrection = true );
+        
+        ci::Vec4f           mDistortionParams;
+        float               mDistortionScale;
+        
+        bool                mUseChromaticAbCorrection;
+        ci::Vec4f           mChromaticAbCorrection;
+        ci::gl::GlslProgRef mShader;
     };
 };
 
