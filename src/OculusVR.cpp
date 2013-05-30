@@ -17,16 +17,22 @@ namespace ovr {
     
     DeviceRef Device::create()
     {
+        // Try to initialize a device
         DeviceRef newDevice( new Device() );
         if( newDevice->mHMD )
             return newDevice;
+        
+        // Returns a null_ptr if it failed
         else return DeviceRef();
     }
     Device::~Device()
     {
+        // If thread is running wait for it to end
         mIsAutoCalibrating = false;
-        mAutoCalibrationThread.join();
+        if( mAutoCalibrationThread.joinable() )
+            mAutoCalibrationThread.join();
         
+        // Clear Hmd and Sensor
         mSensorDevice.Clear();
         mHMD.Clear();
         mManager.Clear();
