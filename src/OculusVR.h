@@ -47,6 +47,8 @@ namespace ovr {
         ~Device();
         
         float       getIPD() const;
+        float       getFov();
+        float       getEyeToScreenDistance() const;
         float       getProjectionCenterOffset();
         float       getDistortionScale();
         ci::Vec4f   getDistortionParams() const;

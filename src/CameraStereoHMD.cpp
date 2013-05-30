@@ -17,7 +17,7 @@ CameraStereoHMD::CameraStereoHMD()
 {
     setEyeSeparation( 0.64f );//0.00119808f );
     setConvergence(0);
-    setFov( 110.0f );
+    setFov( 125.871f );
 }
 
 CameraStereoHMD::CameraStereoHMD( int pixelWidth, int pixelHeight, float fov )
@@ -26,7 +26,6 @@ CameraStereoHMD::CameraStereoHMD( int pixelWidth, int pixelHeight, float fov )
 {
     setEyeSeparation( 0.64f );//0.00119808f );
     setConvergence(0);
-    setFov( 110.0f );
 }
 
 CameraStereoHMD::CameraStereoHMD( int pixelWidth, int pixelHeight, float fov, float nearPlane, float farPlane )
@@ -35,7 +34,6 @@ CameraStereoHMD::CameraStereoHMD( int pixelWidth, int pixelHeight, float fov, fl
 {
     setEyeSeparation( 0.64f );//0.00119808f );
     setConvergence(0);
-    setFov( 110.0f );
 }
 
 

@@ -71,6 +71,14 @@ namespace ovr {
     {
         return mStereoConfig.GetIPD();
     }
+    float Device::getFov() 
+    {
+        return mStereoConfig.GetYFOVDegrees();
+    }
+    float Device::getEyeToScreenDistance() const
+    {
+        return mStereoConfig.GetEyeToScreenDistance();
+    }
     float Device::getProjectionCenterOffset()
     {
         return mStereoConfig.GetProjectionCenterOffset();
