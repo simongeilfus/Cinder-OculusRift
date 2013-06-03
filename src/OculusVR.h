@@ -57,14 +57,14 @@ namespace ovr {
         float       getFov();
         //! Returns the distance to the screen used to compute the near plane.
         float       getEyeToScreenDistance() const;
-        //! Get the value used to offset the Projection Matrices
+        //! Returns the value used to offset the Projection Matrices
         float       getProjectionCenterOffset();
-        //! Get the value to fit the distortion to the screen
+        //! Returns the value to fit the distortion to the screen
         float       getDistortionScale();
-        //! Get the 4 values used by the distortion correction
+        //! Returns the 4 values used by the distortion correction
         ci::Vec4f   getDistortionParams() const;
         
-        //! Get Device Orientation
+        //! Returns Device Orientation
         ci::Quatf   getOrientation();
         
         // not tested...
