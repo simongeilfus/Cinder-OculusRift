@@ -288,9 +288,8 @@ namespace ovr {
         
         glEnable( GL_SCISSOR_TEST );
         glScissor( 0, 0, rect.getWidth() * 0.5f, rect.getHeight() );
-        gl::drawSolidRect( rect );
-        
-        
+        gl::draw(texture, rect);
+      
         distortionXCenterOffset = -0.25f / mDistortionScale;
         scaleFactor             = 1.0f / mDistortionScale;
         x                       = 0.5f;
@@ -300,7 +299,7 @@ namespace ovr {
         mShader->uniform( "Scale", Vec2f( (w/2) * scaleFactor, (h/2) * scaleFactor * as ) );
         
         glScissor( rect.getWidth() * 0.5f, 0, rect.getWidth(), rect.getHeight() );
-        gl::drawSolidRect( rect );
+        gl::draw(texture, rect);
         glDisable( GL_SCISSOR_TEST );
         
         texture.unbind();
