@@ -102,7 +102,7 @@ namespace ovr {
     
     Quatf Device::getOrientation()
     {
-        return toCinder( mSensorFusion.GetOrientation() );
+        return toCinder( mSensorFusion->GetOrientation() );
     }
     
     
