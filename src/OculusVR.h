@@ -79,20 +79,14 @@ namespace ovr {
         ci::Matrix44f   getRightEyeOrthoProjection();
         
     protected:
-        Device( bool autoCalibrate = false );
-        
-        void updateAutoCalibration();
+        Device();
       
         OVR::Ptr<OVR::DeviceManager>    mManager;
         OVR::Ptr<OVR::HMDDevice>        mHMD;
         OVR::HMDInfo                    mHMDInfo;
         std::shared_ptr<OVR::SensorFusion> mSensorFusion;
         OVR::Ptr<OVR::SensorDevice>     mSensorDevice;
-//        OVR::Util::MagCalibration       mMagCalibration;
         OVR::Util::Render::StereoConfig mStereoConfig;
-        
-        bool                            mIsAutoCalibrating;
-        std::thread                     mAutoCalibrationThread;
     };
     
     

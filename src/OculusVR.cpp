@@ -27,11 +27,6 @@ namespace ovr {
     }
     Device::~Device()
     {
-        // If thread is running wait for it to end
-        mIsAutoCalibrating = false;
-        if( mAutoCalibrationThread.joinable() )
-            mAutoCalibrationThread.join();
-        
         // Clear Hmd and Sensor
         mSensorDevice.Clear();
         mHMD.Clear();
@@ -41,7 +36,7 @@ namespace ovr {
         OVR::System::Destroy();
     }
     
-    Device::Device( bool autoCalibrate )
+    Device::Device()
     {
         
         // Init OVR
@@ -64,13 +59,6 @@ namespace ovr {
             mSensorFusion = std::make_shared<OVR::SensorFusion>();
             if (mSensorDevice)
                 mSensorFusion->AttachToSensor(mSensorDevice);
-          
-            if( autoCalibrate ){
-//                mIsAutoCalibrating = true;
-//                mMagCalibration.BeginAutoCalibration( mSensorFusion );
-//                mAutoCalibrationThread = std::thread( &Device::updateAutoCalibration, this );
-            }
-            else mIsAutoCalibrating = false;
         }
     }
     
@@ -140,31 +128,6 @@ namespace ovr {
     {
         return toCinder( mStereoConfig.GetEyeRenderParams( OVR::Util::Render::StereoEye_Right ).OrthoProjection );
     }
-    
-    
-    void Device::updateAutoCalibration()
-    {
-//        while ( mIsAutoCalibrating )
-//        {
-//            mMagCalibration.UpdateAutoCalibration( mSensorFusion );
-//            if ( mMagCalibration.IsCalibrated() )
-//            {
-//                if ( mSensorFusion.IsMagReady() )
-//                    mSensorFusion.SetYawCorrectionEnabled(true);
-//                OVR::Vector3f mc = mMagCalibration.GetMagCenter();
-//                std::cout << "   Magnetometer Calibration Complete" << std::endl << "Center: " << mc.x << " " << mc.y << " " << mc.z << std::endl;
-//                
-//                mIsAutoCalibrating = false;
-//            }
-//            else if( !mMagCalibration.IsAutoCalibrating() ){
-//                mIsAutoCalibrating = false;
-//            }
-//            
-//            ci::sleep( 1 );
-//        }
-    }
-    
-    
     
     static const char* PostProcessFragShaderSrc =
     "uniform vec2 LensCenter;\n"
