@@ -36,7 +36,8 @@ namespace ovr {
         mSensorDevice.Clear();
         mHMD.Clear();
         mManager.Clear();
-        
+        mSensorFusion = nullptr;
+      
         OVR::System::Destroy();
     }
     
@@ -59,14 +60,15 @@ namespace ovr {
             }
             
             mSensorDevice = *mHMD->GetSensor();
-            
+
+            mSensorFusion = std::make_shared<OVR::SensorFusion>();
             if (mSensorDevice)
-                mSensorFusion.AttachToSensor(mSensorDevice);
-            
+                mSensorFusion->AttachToSensor(mSensorDevice);
+          
             if( autoCalibrate ){
-                mIsAutoCalibrating = true;
-                mMagCalibration.BeginAutoCalibration( mSensorFusion );
-                mAutoCalibrationThread = std::thread( &Device::updateAutoCalibration, this );
+//                mIsAutoCalibrating = true;
+//                mMagCalibration.BeginAutoCalibration( mSensorFusion );
+//                mAutoCalibrationThread = std::thread( &Device::updateAutoCalibration, this );
             }
             else mIsAutoCalibrating = false;
         }
@@ -142,24 +144,24 @@ namespace ovr {
     
     void Device::updateAutoCalibration()
     {
-        while ( mIsAutoCalibrating )
-        {
-            mMagCalibration.UpdateAutoCalibration( mSensorFusion );
-            if ( mMagCalibration.IsCalibrated() )
-            {
-                if ( mSensorFusion.IsMagReady() )
-                    mSensorFusion.SetYawCorrectionEnabled(true);
-                OVR::Vector3f mc = mMagCalibration.GetMagCenter();
-                std::cout << "   Magnetometer Calibration Complete" << std::endl << "Center: " << mc.x << " " << mc.y << " " << mc.z << std::endl;
-                
-                mIsAutoCalibrating = false;
-            }
-            else if( !mMagCalibration.IsAutoCalibrating() ){
-                mIsAutoCalibrating = false;
-            }
-            
-            ci::sleep( 1 );
-        }
+//        while ( mIsAutoCalibrating )
+//        {
+//            mMagCalibration.UpdateAutoCalibration( mSensorFusion );
+//            if ( mMagCalibration.IsCalibrated() )
+//            {
+//                if ( mSensorFusion.IsMagReady() )
+//                    mSensorFusion.SetYawCorrectionEnabled(true);
+//                OVR::Vector3f mc = mMagCalibration.GetMagCenter();
+//                std::cout << "   Magnetometer Calibration Complete" << std::endl << "Center: " << mc.x << " " << mc.y << " " << mc.z << std::endl;
+//                
+//                mIsAutoCalibrating = false;
+//            }
+//            else if( !mMagCalibration.IsAutoCalibrating() ){
+//                mIsAutoCalibrating = false;
+//            }
+//            
+//            ci::sleep( 1 );
+//        }
     }
     
     
