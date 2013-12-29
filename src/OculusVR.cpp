@@ -27,20 +27,16 @@ namespace ovr {
     }
     Device::~Device()
     {
-        // If thread is running wait for it to end
-        mIsAutoCalibrating = false;
-        if( mAutoCalibrationThread.joinable() )
-            mAutoCalibrationThread.join();
-        
         // Clear Hmd and Sensor
         mSensorDevice.Clear();
         mHMD.Clear();
         mManager.Clear();
-        
+        mSensorFusion = nullptr;
+      
         OVR::System::Destroy();
     }
     
-    Device::Device( bool autoCalibrate )
+    Device::Device()
     {
         
         // Init OVR
@@ -59,16 +55,10 @@ namespace ovr {
             }
             
             mSensorDevice = *mHMD->GetSensor();
-            
+
+            mSensorFusion = std::make_shared<OVR::SensorFusion>();
             if (mSensorDevice)
-                mSensorFusion.AttachToSensor(mSensorDevice);
-            
-            if( autoCalibrate ){
-                mIsAutoCalibrating = true;
-                mMagCalibration.BeginAutoCalibration( mSensorFusion );
-                mAutoCalibrationThread = std::thread( &Device::updateAutoCalibration, this );
-            }
-            else mIsAutoCalibrating = false;
+                mSensorFusion->AttachToSensor(mSensorDevice);
         }
     }
     
@@ -100,7 +90,7 @@ namespace ovr {
     
     Quatf Device::getOrientation()
     {
-        return toCinder( mSensorFusion.GetOrientation() );
+        return toCinder( mSensorFusion->GetOrientation() );
     }
     
     
@@ -138,31 +128,6 @@ namespace ovr {
     {
         return toCinder( mStereoConfig.GetEyeRenderParams( OVR::Util::Render::StereoEye_Right ).OrthoProjection );
     }
-    
-    
-    void Device::updateAutoCalibration()
-    {
-        while ( mIsAutoCalibrating )
-        {
-            mMagCalibration.UpdateAutoCalibration( mSensorFusion );
-            if ( mMagCalibration.IsCalibrated() )
-            {
-                if ( mSensorFusion.IsMagReady() )
-                    mSensorFusion.SetYawCorrectionEnabled(true);
-                OVR::Vector3f mc = mMagCalibration.GetMagCenter();
-                std::cout << "   Magnetometer Calibration Complete" << std::endl << "Center: " << mc.x << " " << mc.y << " " << mc.z << std::endl;
-                
-                mIsAutoCalibrating = false;
-            }
-            else if( !mMagCalibration.IsAutoCalibrating() ){
-                mIsAutoCalibrating = false;
-            }
-            
-            ci::sleep( 1 );
-        }
-    }
-    
-    
     
     static const char* PostProcessFragShaderSrc =
     "uniform vec2 LensCenter;\n"
@@ -286,9 +251,8 @@ namespace ovr {
         
         glEnable( GL_SCISSOR_TEST );
         glScissor( 0, 0, rect.getWidth() * 0.5f, rect.getHeight() );
-        gl::drawSolidRect( rect );
-        
-        
+        gl::draw(texture, rect);
+      
         distortionXCenterOffset = -0.25f / mDistortionScale;
         scaleFactor             = 1.0f / mDistortionScale;
         x                       = 0.5f;
@@ -298,7 +262,7 @@ namespace ovr {
         mShader->uniform( "Scale", Vec2f( (w/2) * scaleFactor, (h/2) * scaleFactor * as ) );
         
         glScissor( rect.getWidth() * 0.5f, 0, rect.getWidth(), rect.getHeight() );
-        gl::drawSolidRect( rect );
+        gl::draw(texture, rect);
         glDisable( GL_SCISSOR_TEST );
         
         texture.unbind();
